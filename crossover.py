@@ -5,26 +5,19 @@ from scipy.spatial.distance import cosine
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Define the directory path where your data is located
 data_dir = '/Users/abhijeetkumar/CrossOver/my_dataset.csv'
 
-# Load the data
 data = pd.read_csv(data_dir)
 
-# Extract relevant data
 user_data = data[['Customer ID', 'StockCode', 'Quantity', 'InvoiceDate']]
 
-# Convert 'Customer ID' to numeric index
 user_data = user_data.reset_index(drop=True)
 user_data['user_id'] = user_data.index
 
-# Handle missing values and data cleaning
 user_data = user_data.dropna()
 
-# Create user-item interaction matrix
 user_item_matrix = user_data.pivot_table(index='user_id', columns='StockCode', values='Quantity', fill_value=0)
 
-# Perform SVD to learn user and item embeddings
 svd = TruncatedSVD(n_components=50)
 user_embeddings = svd.fit_transform(user_item_matrix)
 item_embeddings = svd.components_.T
